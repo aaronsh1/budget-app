@@ -1,0 +1,20 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "BudgetApiAccount",
+  "description": "An account entity",
+  "type": "object",
+  "properties": {
+    "account-id": {
+      "description": "Unique identifier for the account",
+      "type": "integer"
+    },
+    "balance": {
+      "description": "Balance for the account",
+      "type": "integer"
+    },
+    "user": {
+      "description": "The user id of whom the account belongs to",
+      "type": "integer"
+    }
+  }
+}

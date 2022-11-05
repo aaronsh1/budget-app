@@ -1,0 +1,24 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "BudgetApiBudget",
+  "description": "A budget for a user",
+  "type": "object",
+  "properties": {
+    "budget-id": {
+      "description": "Unique identifier for the budget",
+      "type": "integer"
+    },
+    "goal": {
+      "description": "Goal to save up for",
+      "type": "integer"
+    },
+    "description": {
+      "description": "What the budget is for",
+      "type": "string"
+    },
+    "saved": {
+      "description": "How much is already allocated for this budget",
+      "type": "integer"
+    }
+  }
+}

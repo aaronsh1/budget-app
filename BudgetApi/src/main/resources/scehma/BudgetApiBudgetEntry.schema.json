@@ -1,0 +1,24 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "BudgetApiBudgetEntry",
+  "description": "An entry for a budget",
+  "type": "object",
+  "properties": {
+    "budget-entry-id": {
+      "description": "Unique identifier for the budget entry",
+      "type": "integer"
+    },
+    "budget": {
+      "description": "Unique identifier for the budget for the entry",
+      "type": "integer"
+    },
+    "amount": {
+      "description": "An amount for the budget entry",
+      "type": "integer"
+    },
+    "user": {
+      "description": "The user who made the budget entry",
+      "type": "integer"
+    }
+  }
+}

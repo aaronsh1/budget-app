@@ -1,4 +1,4 @@
-package com.budgetapi;
+package com.budget.api;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

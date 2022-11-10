@@ -33,6 +33,16 @@ public class Budget {
     @OneToMany(mappedBy = "budget")
     private Set<BudgetEntry> budgetEntries = new LinkedHashSet<>();
 
+    public Budget(Integer goal) {
+        this.goal = goal;
+        this.saved = 0;
+    }
+
+    public Budget(Integer goal, Integer saved) {
+        this.goal = goal;
+        this.saved = saved;
+    }
+
     public Set<BudgetEntry> getBudgetEntries() {
         return budgetEntries;
     }

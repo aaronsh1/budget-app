@@ -35,7 +35,7 @@ public class User {
             joinColumns = { @JoinColumn(name = "\"User\"", referencedColumnName = "UserId")},
             inverseJoinColumns = { @JoinColumn( name = "Budget", referencedColumnName = "BudgetId")}
     )
-    private List<Budget> budgets;
+    private Set<Budget> budgets;
 
     @OneToMany(mappedBy = "user")
     private Set<BudgetEntry> budgetEntries = new LinkedHashSet<>();
@@ -59,19 +59,11 @@ public class User {
         this.budgetEntries = budgetEntries;
     }
 
-//    public Set<UserBudget> getUserBudgets() {
-//        return userBudgets;
-//    }
-//
-//    public void setUserBudgets(Set<UserBudget> userBudgets) {
-//        this.userBudgets = userBudgets;
-//    }
-
-    public List<Budget> getBudgets(){
+    public Set<Budget> getBudgets(){
         return this.budgets;
     }
 
-    public void setBudgets(List<Budget> budgets){
+    public void setBudgets(Set<Budget> budgets){
         this.budgets = budgets;
     }
 

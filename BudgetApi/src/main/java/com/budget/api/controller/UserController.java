@@ -14,6 +14,7 @@ import javax.transaction.Transactional;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
 import java.util.List;
+import java.util.Set;
 
 @Component
 @Path("/v1/user")
@@ -65,7 +66,7 @@ public class UserController {
             if(user == null)
                 throw new ResourceNotFoundException("Cannot find user with the given user id.");
 
-            List<BudgetDTO> budgetsToReturn = BudgetDTO.convertToDTOList(user.getBudgets());
+            Set<BudgetDTO> budgetsToReturn = BudgetDTO.convertToDTOList(user.getBudgets());
 
             resp = Response.ok().entity(budgetsToReturn).build();
         }
@@ -92,10 +93,7 @@ public class UserController {
             if(user == null)
                 throw new ResourceNotFoundException("User not found for given user ID");
 
-            user.getAccounts().size();
-
             List<AccountDTO> accounts = AccountDTO.convertToDTOList(user.getAccounts());
-
             resp = Response.ok().entity(accounts).build();
         }
         catch (ResourceNotFoundException e){
@@ -104,6 +102,25 @@ public class UserController {
         finally {
             return resp;
         }
+    }
+
+    @POST
+    @Consumes("application/json")
+    @Produces("application/json")
+    @Path("/add")
+    public Response addUser(UserDTO userDTO){
+        Response resp = null;
+
+        User user = UserDTO.toUser(userDTO);
+
+        try{
+            resp = Response.ok().entity(userRepository.save(user)).build();
+        }catch (Exception e){
+            resp = Response.status(Response.Status.NOT_FOUND).build();
+        }finally{
+            return resp;
+        }
+
     }
 
     @PUT
@@ -117,7 +134,6 @@ public class UserController {
                 throw new ResourceNotFoundException("User not found with the given ID number");
 
             user.setId(oldUser.getId());
-
             UserDTO returnObj = UserDTO.convertToDTO(userRepository.save(user));
             resp = Response.ok().entity(returnObj).build();
         }

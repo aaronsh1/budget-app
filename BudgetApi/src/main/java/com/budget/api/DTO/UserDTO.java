@@ -74,6 +74,16 @@ public class UserDTO {
         return userDTOsToReturn;
     }
 
+    public static User toUser(UserDTO userDTO){
+        User userToReturn = new User();
+        userToReturn.setUserName(userDTO.getUserName());
+        userToReturn.setEmailAddress(userDTO.getEmailAddress());
+        userToReturn.setFirstName(userDTO.getFirstName());
+        userToReturn.setLastName(userDTO.getLastName());
+
+        return userToReturn;
+    }
+
     @Override
     public String toString(){
         String userString = "";

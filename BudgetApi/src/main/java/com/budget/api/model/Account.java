@@ -24,6 +24,13 @@ public class Account {
     @OneToMany(mappedBy = "account")
     private List<AccountEntry> accountEntries = new ArrayList<>();
 
+    public Account(User user) {
+        this.user = user;
+        this.balance = 0;
+    }
+
+    public Account(){}
+
     public List<AccountEntry> getAccountEntries() {
         return accountEntries;
     }

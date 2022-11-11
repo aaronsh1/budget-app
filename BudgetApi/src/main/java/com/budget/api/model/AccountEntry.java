@@ -1,5 +1,7 @@
 package com.budget.api.model;
 
+import com.budget.api.DTO.AccountEntryDTO;
+
 import javax.persistence.*;
 
 @Entity
@@ -19,6 +21,14 @@ public class AccountEntry {
 
     @Column(name = "Type", length = 1)
     private String type;
+
+    public AccountEntry(Integer amount, Account account, String type) {
+        this.amount = amount;
+        this.account = account;
+        this.type = type;
+    }
+
+    public AccountEntry() {}
 
     public String getType() {
         return type;

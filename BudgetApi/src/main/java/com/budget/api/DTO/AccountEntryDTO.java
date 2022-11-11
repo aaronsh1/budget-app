@@ -13,6 +13,8 @@ public class AccountEntryDTO {
 
     private String type;
 
+    private Integer account;
+
     public AccountEntryDTO(Integer amount, String type) {
         this.amount = amount;
         this.type = type;
@@ -32,6 +34,14 @@ public class AccountEntryDTO {
         }
 
         return accountEntriesToReturn;
+    }
+
+    public Integer getAccount() {
+        return account;
+    }
+
+    public void setAccount(Integer account) {
+        this.account = account;
     }
 
     public Integer getAmount() {

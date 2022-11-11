@@ -10,6 +10,8 @@ import java.util.List;
 public class UserDTO {
 
 //    region properties
+    private Integer userId;
+
     private String userName;
 
     private String firstName;
@@ -53,7 +55,15 @@ public class UserDTO {
         this.userName = userName;
     }
 
-//    endregion
+    public Integer getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Integer userId) {
+        this.userId = userId;
+    }
+
+    //    endregion
 
     public static UserDTO convertToDTO(User user){
         UserDTO userDTOtoReturn = new UserDTO();

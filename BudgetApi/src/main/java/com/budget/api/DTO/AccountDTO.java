@@ -37,6 +37,10 @@ public class AccountDTO {
         return accountsToReturn;
     }
 
+//    public static toAccount(AccountDTO accountDTO){
+//        return new Account(accountDTO.getBalance(), )
+//    }
+
     public Integer getBalance() {
         return balance;
     }

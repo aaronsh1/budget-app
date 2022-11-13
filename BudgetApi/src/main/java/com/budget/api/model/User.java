@@ -26,9 +26,6 @@ public class User {
     @Column(name = "emailAddress")
     private String emailAddress;
 
-//    @OneToMany(mappedBy = "user")
-//    private Set<UserBudget> userBudgets = new LinkedHashSet<>();
-
     @OneToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name="UserBudget",
@@ -42,6 +39,15 @@ public class User {
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private List<Account> accounts = new ArrayList<>();
+
+    public User(String userName, String firstName, String lastName, String emailAddress) {
+        this.userName = userName;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.emailAddress = emailAddress;
+    }
+
+    public User() {}
 
     public List<Account> getAccounts() {
         return accounts;
@@ -107,16 +113,4 @@ public class User {
         this.id = id;
     }
 
-    @Override
-    public String toString(){
-        String userString = "";
-        userString += "Username: " + this.userName;
-        userString += "First name: " + this.firstName;
-        userString += "Last name: " + this.lastName;
-        userString += "Email: " + this.emailAddress;
-//        userString += "Budgets: " + this.userBudgets;
-        userString += "Accounts: " + this.accounts;
-
-        return userString;
-    }
 }

@@ -6,6 +6,8 @@ import com.budget.api.DTO.UserDTO;
 import com.budget.api.exception.ResourceNotFoundException;
 import com.budget.api.model.User;
 import com.budget.api.repository.UserRepository;
+import com.budget.api.service.UserService;
+import com.budget.api.service.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Component;
@@ -21,16 +23,22 @@ import java.util.Set;
 public class UserController {
 
     @Autowired
-    private UserRepository userRepository;
+    private UserService userService;
 
     @GET
     @Produces("application/json")
     @Path("/all")
     public Response getAllUsers(){
-        List<User> users = userRepository.findAll();
-        List<UserDTO> usersToReturn = UserDTO.usersToDTO(users);
-
-        return Response.ok().entity(usersToReturn).build();
+        Response resp = null;
+        try{
+            List<UserDTO> usersToReturn = userService.getAllUsers();
+            resp = Response.ok().entity(usersToReturn).build();
+        } catch (Exception e){
+            resp = Response.status(Response.Status.METHOD_NOT_ALLOWED).build();
+        }
+        finally {
+            return resp;
+        }
     }
 
     @GET
@@ -39,20 +47,18 @@ public class UserController {
     public Response getUserById(@PathParam("user-id") int userId) throws ResourceNotFoundException {
         Response resp = null;
         try{
-            User userObj = userRepository.findById(userId).orElse(null);
-            if(userObj == null)
-                throw new ResourceNotFoundException("The user with the specified user id could not be found");
-
-            UserDTO userToReturn = UserDTO.convertToDTO(userObj);
+            UserDTO userToReturn = userService.getUserById(userId);
             resp = Response.ok().entity(userToReturn).build();
         }
         catch (ResourceNotFoundException e){
             resp = Response.status(Response.Status.NOT_FOUND).entity("{\"Exception\":" + "{\""+e+"\"}" + "}").build();
         }
+        catch(Exception e){
+            resp = Response.status(Response.Status.SERVICE_UNAVAILABLE).entity("{\"Exception\":" + "{\""+e+"\"}" + "}").build();
+        }
         finally {
             return resp;
         }
-
     }
 
     @GET
@@ -62,12 +68,7 @@ public class UserController {
     public Response getUserBudgets(@PathParam("user-id") int userId) throws ResourceNotFoundException{
         Response resp = null;
         try{
-            User user = userRepository.findById(userId).orElse(null);
-            if(user == null)
-                throw new ResourceNotFoundException("Cannot find user with the given user id.");
-
-            Set<BudgetDTO> budgetsToReturn = BudgetDTO.convertToDTOList(user.getBudgets());
-
+            Set<BudgetDTO> budgetsToReturn = userService.getUserBudgets(userId);
             resp = Response.ok().entity(budgetsToReturn).build();
         }
         catch (ResourceNotFoundException e){
@@ -89,15 +90,14 @@ public class UserController {
         Response resp = null;
 
         try{
-            User user = userRepository.findById(userId).orElse(null);
-            if(user == null)
-                throw new ResourceNotFoundException("User not found for given user ID");
-
-            List<AccountDTO> accounts = AccountDTO.convertToDTOList(user.getAccounts());
+            Set<AccountDTO> accounts = userService.getUserAccounts(userId);
             resp = Response.ok().entity(accounts).build();
         }
         catch (ResourceNotFoundException e){
             resp = Response.status(Response.Status.NOT_FOUND).entity("{\"Exception\":" + "{\""+e+"\"}" + "}").build();
+        }
+        catch (Exception e){
+            resp = Response.status(Response.Status.METHOD_NOT_ALLOWED).entity("{\"Exception\":" + "{\""+e+"\"}" + "}").build();
         }
         finally {
             return resp;
@@ -111,30 +111,23 @@ public class UserController {
     public Response addUser(UserDTO userDTO){
         Response resp = null;
 
-        User user = UserDTO.toUser(userDTO);
-
         try{
-            resp = Response.ok().entity(userRepository.save(user)).build();
+            UserDTO addedUser = userService.addUser(userDTO);
+            resp = Response.ok().entity(addedUser).build();
         }catch (Exception e){
             resp = Response.status(Response.Status.NOT_FOUND).build();
         }finally{
             return resp;
         }
-
     }
 
     @PUT
     @Produces("application/json")
     @Path("/{user-id}")
-    public Response replaceUser(@PathParam("user-id") int userId, User user) throws ResourceNotFoundException {
+    public Response replaceUser(@PathParam("user-id") int userId, UserDTO userDTO) throws ResourceNotFoundException {
         Response resp = null;
         try{
-            User oldUser = userRepository.findById(userId).orElse(null);
-            if(oldUser == null)
-                throw new ResourceNotFoundException("User not found with the given ID number");
-
-            user.setId(oldUser.getId());
-            UserDTO returnObj = UserDTO.convertToDTO(userRepository.save(user));
+            UserDTO returnObj = userService.replaceUser(userId, userDTO);
             resp = Response.ok().entity(returnObj).build();
         }
         catch (ResourceNotFoundException e){
@@ -143,32 +136,16 @@ public class UserController {
         finally {
             return resp;
         }
-
     }
 
     @PATCH
     @Produces("application/json")
     @Path("/{user-id}")
-    public Response updateUser(@PathParam("user-id") int userId, User user) throws ResourceNotFoundException {
+    public Response updateUser(@PathParam("user-id") int userId, UserDTO userDTO) throws ResourceNotFoundException {
         Response resp = null;
         try{
-            User userToUpdate = userRepository.findById(userId).orElse(null);
-            if(userToUpdate == null)
-                throw new ResourceNotFoundException("User not found with the given ID number");
-
-            if(user.getUserName() != null && !user.getUserName().equals(""))
-                userToUpdate.setUserName(user.getUserName());
-
-            if(user.getFirstName() != null && !user.getFirstName().equals(""))
-                userToUpdate.setFirstName(user.getFirstName());
-
-            if(user.getLastName() != null && !user.getLastName().equals(""))
-                userToUpdate.setLastName(user.getLastName());
-
-            if(user.getEmailAddress() != null && !user.getEmailAddress().equals(""))
-                userToUpdate.setEmailAddress(user.getEmailAddress());
-
-            resp = Response.ok().entity(UserDTO.convertToDTO(userToUpdate)).build();
+            UserDTO updatedUser = userService.updateUser(userId, userDTO);
+            resp = Response.ok().entity(updatedUser).build();
         }
         catch (ResourceNotFoundException e){
             resp = Response.status(Response.Status.NOT_FOUND).entity("{\"Exception\":" + "{\""+e+"\"}" + "}").build();
@@ -184,7 +161,7 @@ public class UserController {
     public Response deleteUser(@PathParam("user-id") int userId){
         Response resp = null;
         try{
-            userRepository.deleteById(userId);
+            userService.deleteUser(userId);
             resp =  Response.ok().entity("{\"User Successfully Deleted\"}").build();
         }catch (EmptyResultDataAccessException e){
             resp = Response.status(Response.Status.NOT_FOUND).entity("{\"Exception\":" + "{\""+e+"\"}" + "}").build();
@@ -194,7 +171,5 @@ public class UserController {
         finally {
             return resp;
         }
-
-
     }
 }

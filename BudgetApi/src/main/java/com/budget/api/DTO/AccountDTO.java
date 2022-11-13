@@ -5,7 +5,9 @@ import com.budget.api.model.Account;
 import com.budget.api.model.AccountEntry;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class AccountDTO {
 
@@ -31,8 +33,8 @@ public class AccountDTO {
         return new AccountDTO(account.getBalance(), account.getUser().getId(), AccountEntryDTO.convertToDTOList(account.getAccountEntries()));
     }
 
-    public static List<AccountDTO> convertToDTOList(List<Account> accounts){
-        List<AccountDTO> accountsToReturn = new ArrayList<>();
+    public static Set<AccountDTO> convertToDTOList(List<Account> accounts){
+        Set<AccountDTO> accountsToReturn = new HashSet<>();
 
         for(Account account : accounts){
             accountsToReturn.add(convertToDTO(account));

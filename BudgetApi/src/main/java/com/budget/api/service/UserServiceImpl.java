@@ -79,7 +79,7 @@ public class UserServiceImpl implements UserService{
 
         User oldUser = userRepository.findById(userId).orElse(null);
         if(isUserEmpty(userDTO))
-            throw new EmptyResourceException("THe user provided is missing values.");
+            throw new EmptyResourceException("The user provided is missing values.");
 
         if(oldUser == null)
             throw new ResourceNotFoundException("User not found with the given ID number");
@@ -120,16 +120,16 @@ public class UserServiceImpl implements UserService{
 
     @Override
     public boolean isUserEmpty(UserDTO userDTO){
-        if(userDTO.getUserName() == null && userDTO.getUserName().equals(""))
+        if(userDTO.getUserName() == null || userDTO.getUserName().equals(""))
             return true;
 
-        else if(userDTO.getFirstName() == null && userDTO.getFirstName().equals(""))
+        else if(userDTO.getFirstName() == null || userDTO.getFirstName().equals(""))
             return true;
 
-        else if(userDTO.getLastName() == null && userDTO.getLastName().equals(""))
+        else if(userDTO.getLastName() == null || userDTO.getLastName().equals(""))
             return true;
 
-        else if(userDTO.getEmailAddress() == null && userDTO.getEmailAddress().equals(""))
+        else if(userDTO.getEmailAddress() == null || userDTO.getEmailAddress().equals(""))
             return true;
         else{
             return false;

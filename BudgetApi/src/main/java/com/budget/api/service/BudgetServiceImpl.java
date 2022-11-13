@@ -2,6 +2,7 @@ package com.budget.api.service;
 
 import com.budget.api.DTO.BudgetDTO;
 import com.budget.api.DTO.BudgetEntryDTO;
+import com.budget.api.exception.EmptyResourceException;
 import com.budget.api.exception.ResourceNotFoundException;
 import com.budget.api.model.Budget;
 import com.budget.api.model.BudgetEntry;
@@ -54,15 +55,15 @@ public class BudgetServiceImpl implements BudgetService{
             throw new ResourceNotFoundException("Budget not found for the given id.");
         }
 
-        if(!budgetDTO.getGoal().equals(""))
+        if(budgetDTO.getGoal() != null && budgetDTO.getGoal() !=0)
             budgetToUpdate.setGoal(budgetDTO.getGoal());
 
-        if(budgetDTO.getUsers() != null){
+        if(budgetDTO.getUsers() != null && budgetDTO.getUsers().size() != 0){
             List<User> usersForBudget = userRepository.findAllById(budgetDTO.getUsers());
             budgetToUpdate.getUsers().addAll(usersForBudget);
         }
 
-        if(!budgetDTO.getSaved().equals(""))
+        if(budgetDTO.getSaved() != null && budgetDTO.getSaved() != 0)
             budgetToUpdate.setSaved(budgetDTO.getSaved());
 
         Budget infoReturned = budgetRepository.save(budgetToUpdate);
@@ -71,7 +72,9 @@ public class BudgetServiceImpl implements BudgetService{
     }
 
     @Override
-    public BudgetDTO replaceBudget(int budgetId, BudgetDTO budgetDTO) throws ResourceNotFoundException {
+    public BudgetDTO replaceBudget(int budgetId, BudgetDTO budgetDTO) throws ResourceNotFoundException, EmptyResourceException {
+        if(isBudgetEmpty(budgetDTO))
+            throw new EmptyResourceException("Empty budget passed in.");
         if(!budgetRepository.existsById(budgetId))
             throw new ResourceNotFoundException("Cannot find budget with given ID");
 
@@ -110,5 +113,17 @@ public class BudgetServiceImpl implements BudgetService{
     @Override
     public void deleteBudget(int budgetId) {
         budgetRepository.deleteById(budgetId);
+    }
+
+    @Override
+    public boolean isBudgetEmpty(BudgetDTO budgetDTO){
+        if(budgetDTO.getGoal() == null || budgetDTO.getGoal() == 0)
+            return true;
+        else if(budgetDTO.getSaved() == null || budgetDTO.getSaved() == 0)
+            return true;
+        else if(budgetDTO.getUsers() == null || budgetDTO.getUsers().size() == 0)
+            return true;
+        else
+            return false;
     }
 }

@@ -11,6 +11,7 @@ import com.budget.api.service.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Controller;
 
 import javax.transaction.Transactional;
 import javax.ws.rs.*;
@@ -18,7 +19,7 @@ import javax.ws.rs.core.Response;
 import java.util.List;
 import java.util.Set;
 
-@Component
+@Controller
 @Path("/v1/user")
 public class UserController {
 
@@ -107,7 +108,6 @@ public class UserController {
     @POST
     @Consumes("application/json")
     @Produces("application/json")
-    @Path("/add")
     public Response addUser(UserDTO userDTO){
         Response resp = null;
 
@@ -132,6 +132,8 @@ public class UserController {
         }
         catch (ResourceNotFoundException e){
             resp = Response.status(Response.Status.NOT_FOUND).entity("{\"Exception\":" + "{\""+e+"\"}" + "}").build();
+        }catch(Exception e){
+            resp = Response.status(Response.Status.NOT_FOUND).entity("{\"Exception\":" + "{\""+e+"\"}" + "}").build();
         }
         finally {
             return resp;
@@ -148,6 +150,8 @@ public class UserController {
             resp = Response.ok().entity(updatedUser).build();
         }
         catch (ResourceNotFoundException e){
+            resp = Response.status(Response.Status.NOT_FOUND).entity("{\"Exception\":" + "{\""+e+"\"}" + "}").build();
+        }catch(Exception e){
             resp = Response.status(Response.Status.NOT_FOUND).entity("{\"Exception\":" + "{\""+e+"\"}" + "}").build();
         }
         finally {

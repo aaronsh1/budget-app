@@ -6,13 +6,13 @@ import com.budget.api.exception.ResourceNotFoundException;
 import com.budget.api.service.BudgetService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Controller;
 
 import javax.transaction.Transactional;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
 
-@Component
+@Controller
 @Path("/v1/budget")
 public class BudgetController {
     

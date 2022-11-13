@@ -17,13 +17,16 @@ public class BudgetDTO {
 
     private Integer saved;
 
-    public BudgetDTO(Integer goal, Integer saved, Set<Integer> users) {
+    private Set<BudgetEntryDTO> budgetEntries;
+
+    public BudgetDTO(Integer goal, Integer saved, Set<Integer> users, Set<BudgetEntryDTO> budgetEntries) {
         this.users = users;
         this.goal = goal;
         this.saved = saved;
+        this.budgetEntries = budgetEntries;
     }
 
-    public BudgetDTO(Budget budget){}
+    public BudgetDTO(){}
 
     public static BudgetDTO convertToDTO(Budget budget){
         Set<Integer> userIds = new HashSet<>();
@@ -32,7 +35,7 @@ public class BudgetDTO {
                 userIds.add(user.getId());
         }
 
-        return new BudgetDTO(budget.getGoal(), budget.getSaved(), userIds);
+        return new BudgetDTO(budget.getGoal(), budget.getSaved(), userIds, BudgetEntryDTO.convertToDTOList(budget.getBudgetEntries()));
     }
 
     public static Set<BudgetDTO> convertToDTOList(Set<Budget> budgets){
@@ -71,5 +74,13 @@ public class BudgetDTO {
 
     public void setUsers(Set<Integer> user) {
         this.users = user;
+    }
+
+    public Set<BudgetEntryDTO> getBudgetEntries() {
+        return budgetEntries;
+    }
+
+    public void setBudgetEntries(Set<BudgetEntryDTO> budgetEntries) {
+        this.budgetEntries = budgetEntries;
     }
 }

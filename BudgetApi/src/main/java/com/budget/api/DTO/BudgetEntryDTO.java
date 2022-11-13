@@ -5,7 +5,9 @@ import com.budget.api.model.BudgetEntry;
 import com.budget.api.model.User;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 
 public class BudgetEntryDTO {
@@ -26,8 +28,8 @@ public class BudgetEntryDTO {
         return new BudgetEntryDTO(budgetEntry.getUser().getId(), budgetEntry.getBudget().getId(), budgetEntry.getAmount());
     }
 
-    public static List<BudgetEntryDTO> convertToDTOList(List<BudgetEntry> budgetEntries){
-        List<BudgetEntryDTO> budgetEntriesToReturn = new ArrayList<>();
+    public static Set<BudgetEntryDTO> convertToDTOList(Set<BudgetEntry> budgetEntries){
+        Set<BudgetEntryDTO> budgetEntriesToReturn = new HashSet<>();
 
         for(BudgetEntry entry : budgetEntries){
             budgetEntriesToReturn.add(convertToDTO(entry));

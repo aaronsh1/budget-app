@@ -1,10 +1,7 @@
 package com.budget.api.model;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 @Table(name = "Account")
@@ -22,7 +19,7 @@ public class Account {
     private User user;
 
     @OneToMany(mappedBy = "account")
-    private List<AccountEntry> accountEntries = new ArrayList<>();
+    private Set<AccountEntry> accountEntries = new HashSet<>();
 
     public Account(User user) {
         this.user = user;
@@ -31,11 +28,11 @@ public class Account {
 
     public Account(){}
 
-    public List<AccountEntry> getAccountEntries() {
+    public Set<AccountEntry> getAccountEntries() {
         return accountEntries;
     }
 
-    public void setAccountEntries(List<AccountEntry> accountEntries) {
+    public void setAccountEntries(Set<AccountEntry> accountEntries) {
         this.accountEntries = accountEntries;
     }
 

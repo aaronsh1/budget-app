@@ -15,11 +15,11 @@ public class AccountDTO {
 
     private Integer user;
 
-    private List<AccountEntryDTO> accountEntries;
+    private Set<AccountEntryDTO> accountEntries;
 
     public AccountDTO(){}
 
-    public AccountDTO(Integer balance, Integer user, List<AccountEntryDTO> accountEntries) {
+    public AccountDTO(Integer balance, Integer user, Set<AccountEntryDTO> accountEntries) {
         this.balance = balance;
         this.user = user;
         this.accountEntries = accountEntries;
@@ -59,11 +59,11 @@ public class AccountDTO {
         this.user = user;
     }
 
-    public List<AccountEntryDTO> getAccountEntries() {
+    public Set<AccountEntryDTO> getAccountEntries() {
         return accountEntries;
     }
 
-    public void setAccountEntries(List<AccountEntryDTO> accountEntries) {
+    public void setAccountEntries(Set<AccountEntryDTO> accountEntries) {
         this.accountEntries = accountEntries;
     }
 }

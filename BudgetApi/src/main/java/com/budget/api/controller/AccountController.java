@@ -77,7 +77,6 @@ public class AccountController {
 
     @POST
     @Produces("application/json")
-    @Path("/add")
     public Response addAccount(AccountDTO accountDTO){
         Response resp = null;
         try{

@@ -41,7 +41,7 @@ public class AccountServiceImpl implements AccountService{
     public AccountEntryDTO getTransaction(int accountId, int accountEntryId) throws ResourceNotFoundException {
         AccountEntry accountEntryToReturn = accountEntryRepository.findById(accountEntryId).orElse(null);
         if(accountEntryToReturn == null)
-            throw new ResourceNotFoundException("Cannot find account with given account number");
+            throw new ResourceNotFoundException("Cannot find account entry with given account number");
 
         AccountEntryDTO infoReturn = AccountEntryDTO.convertToDTO(accountEntryToReturn);
         return infoReturn;

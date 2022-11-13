@@ -67,6 +67,7 @@ public class UserDTO {
 
     public static UserDTO convertToDTO(User user){
         UserDTO userDTOtoReturn = new UserDTO();
+        userDTOtoReturn.userId = user.getId();
         userDTOtoReturn.emailAddress = user.getEmailAddress();
         userDTOtoReturn.userName = user.getUserName();
         userDTOtoReturn.firstName = user.getFirstName();

@@ -18,9 +18,6 @@ public class Budget {
 
     @Column(name = "Saved")
     private Integer saved;
-//
-//    @OneToMany(mappedBy = "budget")
-//    private Set<UserBudget> userBudgets = new LinkedHashSet<>();
 
     @OneToMany(fetch = FetchType.LAZY)
     @JoinTable(
@@ -28,13 +25,14 @@ public class Budget {
             joinColumns = { @JoinColumn(name = "Budget", referencedColumnName = "BudgetId") },
             inverseJoinColumns = { @JoinColumn(name = "\"User\"", referencedColumnName = "UserId") }
     )
-    List<User> users;
+    Set<User> users;
 
     @OneToMany(mappedBy = "budget")
     private Set<BudgetEntry> budgetEntries = new LinkedHashSet<>();
 
-    public Budget(Integer goal) {
+    public Budget(Integer goal, Set<User> users) {
         this.goal = goal;
+        this.users = users;
         this.saved = 0;
     }
 
@@ -42,6 +40,8 @@ public class Budget {
         this.goal = goal;
         this.saved = saved;
     }
+
+    public Budget(){}
 
     public Set<BudgetEntry> getBudgetEntries() {
         return budgetEntries;
@@ -51,11 +51,11 @@ public class Budget {
         this.budgetEntries = budgetEntries;
     }
 
-    public List<User> getUsers(){
+    public Set<User> getUsers(){
         return this.users;
     }
 
-    public void setUsers(List<User> users){
+    public void setUsers(Set<User> users){
         this.users = users;
     }
 

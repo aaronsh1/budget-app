@@ -15,7 +15,8 @@ public class AccountEntryDTO {
 
     private Integer account;
 
-    public AccountEntryDTO(Integer amount, String type) {
+    public AccountEntryDTO(Integer amount, String type, Integer account) {
+        this.account = account;
         this.amount = amount;
         this.type = type;
     }
@@ -23,7 +24,7 @@ public class AccountEntryDTO {
     public AccountEntryDTO(){}
 
     public static AccountEntryDTO convertToDTO(AccountEntry accountEntry){
-        return new AccountEntryDTO(accountEntry.getAmount(), accountEntry.getType());
+        return new AccountEntryDTO(accountEntry.getAmount(), accountEntry.getType(), accountEntry.getAccount().getId());
     }
 
     public static List<AccountEntryDTO> convertToDTOList(List<AccountEntry> accountEntries){

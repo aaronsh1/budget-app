@@ -23,6 +23,10 @@ public class AccountDTO {
         this.accountEntries = accountEntries;
     }
 
+    public AccountDTO(Integer user){
+        this.user = user;
+    }
+
     public static AccountDTO convertToDTO(Account account){
         return new AccountDTO(account.getBalance(), account.getUser().getId(), AccountEntryDTO.convertToDTOList(account.getAccountEntries()));
     }
@@ -36,10 +40,6 @@ public class AccountDTO {
 
         return accountsToReturn;
     }
-
-//    public static toAccount(AccountDTO accountDTO){
-//        return new Account(accountDTO.getBalance(), )
-//    }
 
     public Integer getBalance() {
         return balance;

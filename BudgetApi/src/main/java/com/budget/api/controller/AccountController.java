@@ -2,7 +2,6 @@ package com.budget.api.controller;
 
 import com.budget.api.DTO.AccountDTO;
 import com.budget.api.DTO.AccountEntryDTO;
-import com.budget.api.DTO.UserDTO;
 import com.budget.api.exception.ResourceNotFoundException;
 import com.budget.api.model.Account;
 import com.budget.api.model.AccountEntry;
@@ -14,8 +13,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Component;
 
+import javax.transaction.Transactional;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
+import java.util.List;
 
 @Component
 @Path("/v1/account")
@@ -31,14 +32,64 @@ public class AccountController {
     @GET
     @Produces("application/json")
     @Path("/{account-id}")
-    public Response getAccountById(@PathParam("acount-id") int accountId){
+    @Transactional
+    public Response getAccountById(@PathParam("account-id") int accountId){
         Response resp = null;
         try{
             Account accountToReturn = accountRepository.findById(accountId).orElse(null);
             if(accountToReturn == null)
                 throw new ResourceNotFoundException("Cannot find account with given account number");
 
-            resp = Response.ok().entity(accountToReturn).build();
+            resp = Response.ok().entity(AccountDTO.convertToDTO(accountToReturn)).build();
+        }catch (ResourceNotFoundException e){
+            resp = Response.status(Response.Status.NOT_FOUND).entity(e).build();
+        }catch (Exception e){
+            resp = Response.status(Response.Status.METHOD_NOT_ALLOWED).entity(e).build();
+        }
+        finally {
+            return resp;
+        }
+    }
+
+    @GET
+    @Produces("application/json")
+    @Path("/{account-id}/transactions/{account-entry-id}")
+    public Response getTransaction(@PathParam("account-id") int accountId, @PathParam("account-entry-id") int accountEntryId){
+        Response resp = null;
+
+        try{
+            AccountEntry accountEntryToReturn = accountEntryRepository.findById(accountEntryId).orElse(null);
+            if(accountEntryToReturn == null)
+                throw new ResourceNotFoundException("Cannot find account with given account number");
+
+            resp = Response.ok().entity(AccountEntryDTO.convertToDTO(accountEntryToReturn)).build();
+        }catch (ResourceNotFoundException e){
+            resp = Response.status(Response.Status.NOT_FOUND).entity(e).build();
+        }catch (Exception e){
+            resp = Response.status(Response.Status.METHOD_NOT_ALLOWED).entity(e).build();
+        }
+        finally {
+            return resp;
+        }
+    }
+
+    @GET
+    @Produces("application/json")
+    @Path("/{account-id}/transactions")
+    @Transactional
+    public Response getAccountTransactions(@PathParam("account-id") int accountId){
+        Response resp = null;
+
+        try{
+            Account account = accountRepository.findById((accountId)).orElse(null);
+            if(account == null)
+                throw new ResourceNotFoundException("Cannot find account with given account number");
+
+            List<AccountEntry> entries = account.getAccountEntries();
+
+            List<AccountEntryDTO> accountEntries = AccountEntryDTO.convertToDTOList(entries);
+
+            resp = Response.ok().entity(accountEntries).build();
         }catch (ResourceNotFoundException e){
             resp = Response.status(Response.Status.NOT_FOUND).entity(e).build();
         }catch (Exception e){
@@ -52,15 +103,15 @@ public class AccountController {
     @POST
     @Produces("application/json")
     @Path("/add")
-    public Response addAccount(UserDTO userForAccountDTO){
+    public Response addAccount(AccountDTO accountDTO){
         Response resp = null;
         try{
-            User userForAccount = userRepository.findById(userForAccountDTO.getUserId()).orElse(null);
+            User userForAccount = userRepository.findById(accountDTO.getUser()).orElse(null);
             if(userForAccount == null)
                 throw new ResourceNotFoundException("Cannot find user with give user id");
 
             Account accountToAdd = new Account(userForAccount);
-            resp = Response.ok().entity(accountRepository.save(accountToAdd)).build();
+            resp = Response.ok().entity(AccountDTO.convertToDTO(accountRepository.save(accountToAdd))).build();
         }catch (ResourceNotFoundException e){
             resp = Response.status(Response.Status.NOT_FOUND).entity(e).build();
         }catch (Exception e){
@@ -73,7 +124,7 @@ public class AccountController {
 
     @POST
     @Produces("application/json")
-    @Path("/{account-id}/addTransaction")
+    @Path("/{account-id}/transactions")
     public Response addAccountTransaction(@PathParam("account-id") int accountId, AccountEntryDTO accountEntryDTO){
         Response resp = null;
         try{
@@ -83,7 +134,7 @@ public class AccountController {
 
             AccountEntry accountEntryToAdd = new AccountEntry(accountEntryDTO.getAmount(), accountForEntry, accountEntryDTO.getType());
 
-            resp = Response.ok().entity(accountEntryRepository.save(accountEntryToAdd)).build();
+            resp = Response.ok().entity(AccountEntryDTO.convertToDTO(accountEntryRepository.save(accountEntryToAdd))).build();
         }catch (ResourceNotFoundException e){
             resp = Response.status(Response.Status.NOT_FOUND).entity(e).build();
         }catch (Exception e){
@@ -96,7 +147,7 @@ public class AccountController {
 
     @PATCH
     @Produces("application/json")
-    @Path("/{account-entry-id}")
+    @Path("/{account-id}/transactions/{account-entry-id}")
     public Response updateTransaction(@PathParam("account-entry-id") int accountEntryId, AccountEntryDTO accountEntryDTO){
         Response resp = null;
         Account correctAccount;
@@ -116,7 +167,7 @@ public class AccountController {
                 isReset = true;
             }
             if(isReset){
-                resp = Response.ok().entity(accountEntryRepository.save(accountEntryToUpdate)).build();
+                resp = Response.ok().entity(AccountEntryDTO.convertToDTO(accountEntryRepository.save(accountEntryToUpdate))).build();
             }
             else{
                 resp = Response.ok().entity("Nothing to update the account with.").build();
@@ -151,7 +202,7 @@ public class AccountController {
 
     @DELETE
     @Produces("application/json")
-    @Path("/{account-entry-id]")
+    @Path("/{account-id}/transactions/{account-entry-id}")
     public Response deleteTransaction(@PathParam("account-entry-id") int accountEntryId){
         Response resp = null;
         try{

@@ -10,23 +10,20 @@ import java.util.List;
 
 public class BudgetEntryDTO {
 
-    private Integer id;
-
     private Integer user;
 
     private Integer budget;
 
     private Integer amount;
 
-    public BudgetEntryDTO(Integer id, Integer user, Integer budget, Integer amount) {
-        this.id = id;
+    public BudgetEntryDTO(Integer user, Integer budget, Integer amount) {
         this.user = user;
         this.budget = budget;
         this.amount = amount;
     }
 
     public static BudgetEntryDTO convertToDTO(BudgetEntry budgetEntry){
-        return new BudgetEntryDTO(budgetEntry.getId(), budgetEntry.getUser().getId(), budgetEntry.getBudget().getId(), budgetEntry.getAmount());
+        return new BudgetEntryDTO(budgetEntry.getUser().getId(), budgetEntry.getBudget().getId(), budgetEntry.getAmount());
     }
 
     public static List<BudgetEntryDTO> convertToDTOList(List<BudgetEntry> budgetEntries){
@@ -37,14 +34,6 @@ public class BudgetEntryDTO {
         }
 
         return budgetEntriesToReturn;
-    }
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
     }
 
     public Integer getUser() {

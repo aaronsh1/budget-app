@@ -20,13 +20,13 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    @GetMapping(value =  "/all")
+    @GetMapping("/all")
     public List<UserDTO> getAllUsers(){
         return userService.getAllUsers();
     }
 
-    @GetMapping(value = "/{user-id}")
-    public UserDTO getUserById(@PathVariable int userId) throws ResourceNotFoundException {
+    @GetMapping("/{user-id}")
+    public UserDTO getUserById(@PathVariable("user-id") int userId) throws ResourceNotFoundException {
         return userService.getUserById(userId);
     }
 
@@ -42,7 +42,7 @@ public class UserController {
         return userService.getUserAccounts(userId);
     }
 
-    @PostMapping("/")
+    @PostMapping
     public UserDTO addUser(@RequestBody UserDTO userDTO) throws EmptyResourceException {
         return userService.addUser(userDTO);
     }

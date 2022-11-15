@@ -22,7 +22,18 @@ public class UserDTO {
 
 //    endregion
 
-//    region getters&setters
+
+    public UserDTO(Integer userId, String userName, String firstName, String lastName, String emailAddress) {
+        this.userId = userId;
+        this.userName = userName;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.emailAddress = emailAddress;
+    }
+
+    public UserDTO() {}
+
+    //    region getters&setters
     public String getEmailAddress() {
         return emailAddress;
     }

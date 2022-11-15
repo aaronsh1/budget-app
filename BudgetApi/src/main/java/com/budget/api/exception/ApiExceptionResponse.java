@@ -1,6 +1,7 @@
 package com.budget.api.exception;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.web.context.request.WebRequest;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalTime;
@@ -8,7 +9,7 @@ import java.time.LocalTime;
 public class ApiExceptionResponse {
 
     private LocalTime timestamp;
-    private HttpStatus status;
+    private int status;
     private String message;
     private Class exception;
     private String path;
@@ -42,11 +43,11 @@ public class ApiExceptionResponse {
         this.timestamp = timestamp;
     }
 
-    public HttpStatus getStatus() {
+    public Integer getStatus() {
         return status;
     }
 
-    public void setStatus(HttpStatus status) {
+    public void setStatus(Integer status) {
         this.status = status;
     }
 
@@ -61,12 +62,12 @@ public class ApiExceptionResponse {
 
     //region methods
 
-    public void buildErrorResponse(Exception exception, HttpServletRequest request, HttpStatus status){
+    public void buildErrorResponse(Exception exception, WebRequest request, HttpStatus status){
         this.timestamp = LocalTime.now();
         this.exception = exception.getClass();
-        this.status = status;
+        this.status = status.value();
         this.message = exception.getMessage();
-        this.path = request.getServletPath();
+        this.path = request.getDescription(false);
     }
 
     //endregion

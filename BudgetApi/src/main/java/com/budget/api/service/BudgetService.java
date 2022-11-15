@@ -19,5 +19,5 @@ public interface BudgetService {
 
     void deleteBudget(int budgetId);
 
-    public boolean isBudgetEmpty(BudgetDTO budgetDTO);
+    boolean isBudgetEmpty(BudgetDTO budgetDTO);
 }

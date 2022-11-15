@@ -2,165 +2,61 @@ package com.budget.api.controller;
 
 import com.budget.api.DTO.AccountDTO;
 import com.budget.api.DTO.AccountEntryDTO;
-import com.budget.api.exception.ResourceNotFoundException;
+import com.budget.api.exception.EmptyResourceException;
 import com.budget.api.service.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.*;
 
 import javax.transaction.Transactional;
-import javax.ws.rs.*;
-import javax.ws.rs.core.Response;
 import java.util.Set;
 
-@Controller
-@Path("/v1/account")
+@RestController
+@RequestMapping("/v1/account")
 public class AccountController {
 
     @Autowired
     private AccountService accountService;
 
-    @GET
-    @Produces("application/json")
-    @Path("/{account-id}")
-    public Response getAccountById(@PathParam("account-id") int accountId){
-        Response resp = null;
-        try{
-            AccountDTO accountToReturn = accountService.getAccountById(accountId);
-            resp = Response.ok().entity(accountToReturn).build();
-        }catch (ResourceNotFoundException e){
-            resp = Response.status(Response.Status.NOT_FOUND).entity(e).build();
-        }catch (Exception e){
-            resp = Response.status(Response.Status.METHOD_NOT_ALLOWED).entity(e).build();
-        }
-        finally {
-            return resp;
-        }
+    @GetMapping("/{account-id}")
+    public AccountDTO getAccountById(@PathVariable("account-id") int accountId){
+        return accountService.getAccountById(accountId);
     }
 
-    @GET
-    @Produces("application/json")
-    @Path("/{account-id}/transactions/{account-entry-id}")
-    public Response getTransaction(@PathParam("account-id") int accountId, @PathParam("account-entry-id") int accountEntryId){
-        Response resp = null;
-        try{
-            AccountEntryDTO infoToReturn = accountService.getTransaction(accountId, accountEntryId);
-            resp = Response.ok().entity(infoToReturn).build();
-        }catch (ResourceNotFoundException e){
-            resp = Response.status(Response.Status.NOT_FOUND).entity(e).build();
-        }catch (Exception e){
-            resp = Response.status(Response.Status.METHOD_NOT_ALLOWED).entity(e).build();
-        }
-        finally {
-            return resp;
-        }
+    @GetMapping("/{account-id}/transactions/{account-entry-id}")
+    public AccountEntryDTO getTransaction(@PathVariable("account-id") int accountId, @PathVariable("account-entry-id") int accountEntryId){
+        return accountService.getTransaction(accountId, accountEntryId);
     }
 
-    @GET
-    @Produces("application/json")
-    @Path("/{account-id}/transactions")
+    @GetMapping("/{account-id}/transactions")
     @Transactional
-    public Response getAccountTransactions(@PathParam("account-id") int accountId){
-        Response resp = null;
-        try{
-            Set<AccountEntryDTO> accountEntries = accountService.getAccountTransactions(accountId);
-            resp = Response.ok().entity(accountEntries).build();
-        }catch (ResourceNotFoundException e){
-            resp = Response.status(Response.Status.NOT_FOUND).entity(e).build();
-        }catch (Exception e){
-            resp = Response.status(Response.Status.METHOD_NOT_ALLOWED).entity(e).build();
-        }
-        finally {
-            return resp;
-        }
+    public Set<AccountEntryDTO> getAccountTransactions(@PathVariable("account-id") int accountId){
+        return accountService.getAccountTransactions(accountId);
     }
 
-    @POST
-    @Produces("application/json")
-    public Response addAccount(AccountDTO accountDTO){
-        Response resp = null;
-        try{
-            AccountDTO accountToReturn = accountService.addAccount(accountDTO);
-            resp = Response.ok().entity(accountToReturn).build();
-        }catch (ResourceNotFoundException e){
-            resp = Response.status(Response.Status.NOT_FOUND).entity(e).build();
-        }catch (Exception e){
-            resp = Response.status(Response.Status.METHOD_NOT_ALLOWED).entity(e).build();
-        }
-        finally {
-            return resp;
-        }
+    @PostMapping
+    public AccountDTO addAccount(@RequestBody AccountDTO accountDTO){
+        return accountService.addAccount(accountDTO);
     }
 
-    @POST
-    @Produces("application/json")
-    @Path("/{account-id}/transactions")
-    public Response addAccountTransaction(@PathParam("account-id") int accountId, AccountEntryDTO accountEntryDTO){
-        Response resp = null;
-        try{
-            AccountEntryDTO transactionReturn = accountService.addAccountTransaction(accountId, accountEntryDTO);
-            resp = Response.ok().entity(transactionReturn).build();
-        }catch (ResourceNotFoundException e){
-            resp = Response.status(Response.Status.NOT_FOUND).entity(e).build();
-        }catch (Exception e){
-            resp = Response.status(Response.Status.METHOD_NOT_ALLOWED).entity(e).build();
-        }
-        finally {
-            return resp;
-        }
+    @PostMapping("/{account-id}/transactions")
+    public AccountEntryDTO addAccountTransaction(@PathVariable("account-id") int accountId, @RequestBody AccountEntryDTO accountEntryDTO){
+        return accountService.addAccountTransaction(accountId, accountEntryDTO);
     }
 
-    @PATCH
-    @Produces("application/json")
-    @Path("/{account-id}/transactions/{account-entry-id}")
-    public Response updateTransaction(@PathParam("account-entry-id") int accountEntryId, AccountEntryDTO accountEntryDTO){
-        Response resp = null;
-        try{
-            AccountEntryDTO infoToReturn = accountService.updateTransaction(accountEntryId, accountEntryDTO);
-            resp = Response.ok().entity(infoToReturn).build();
-        }catch (ResourceNotFoundException e){
-            resp = Response.status(Response.Status.NOT_FOUND).entity(e).build();
-        }catch (Exception e){
-            resp = Response.status(Response.Status.METHOD_NOT_ALLOWED).entity(e).build();
-        }
-        finally {
-            return resp;
-        }
+    @PatchMapping("/{account-id}/transactions/{account-entry-id}")
+    public AccountEntryDTO updateTransaction(@PathVariable("account-entry-id") int accountEntryId, AccountEntryDTO accountEntryDTO) throws EmptyResourceException {
+        return accountService.updateTransaction(accountEntryId, accountEntryDTO);
     }
 
-    @DELETE
-    @Produces("application/json")
-    @Path("/{account-id}")
-    public Response deleteAccount(@PathParam("account-id") int accountId){
-        Response resp = null;
-        try{
-            accountService.deleteAccount(accountId);
-            resp = Response.ok().entity("{\"Account Successfully Deleted.\"}").build();
-        }catch (EmptyResultDataAccessException e){
-            resp = Response.status(Response.Status.NOT_FOUND).entity("{\"Exception\":" + "{\""+e+"\"}" + "}").build();
-        }catch(Exception e){
-            resp = Response.status(Response.Status.NOT_FOUND).entity("{\"Exception\":" + "{\""+e+"\"}" + "}").build();
-        }
-        finally {
-            return resp;
-        }
+    @DeleteMapping("/{account-id}")
+    public String deleteAccount(@PathVariable("account-id") int accountId){
+        accountService.deleteAccount(accountId);
+        return "{\"Account Successfully Deleted.\"}";
     }
 
-    @DELETE
-    @Produces("application/json")
-    @Path("/{account-id}/transactions/{account-entry-id}")
-    public Response deleteTransaction(@PathParam("account-entry-id") int accountEntryId){
-        Response resp = null;
-        try{
-            accountService.deleteTransaction(accountEntryId);
-            resp = Response.ok().entity("{\"Transaction Successfully Deleted.\"}").build();
-        }catch (EmptyResultDataAccessException e){
-            resp = Response.status(Response.Status.NOT_FOUND).entity("{\"Exception\":" + "{\""+e+"\"}" + "}").build();
-        }catch(Exception e){
-            resp = Response.status(Response.Status.NOT_FOUND).entity("{\"Exception\":" + "{\""+e+"\"}" + "}").build();
-        }
-        finally {
-            return resp;
-        }
+    @DeleteMapping("/{account-id}/transactions/{account-entry-id}")
+    public String deleteTransaction(@PathVariable("account-entry-id") int accountEntryId){
+        accountService.deleteTransaction(accountEntryId);
+        return "{\"Transaction Successfully Deleted.\"}";
     }
 }
